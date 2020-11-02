@@ -1,54 +1,29 @@
-$(document).ready(() => {
-
-    const trigger = $('#trigger'),
-        emailPlace = $('#emailAddress'),
-        namePlace = $('#trigger'),
-        avatarPlace = $('#avatar')
-
-    let counter = 1
-
-    trigger.bind('click', () => {
-        const xhr = new XMLHttpRequest()
-        let url = `https://webuniv.herokuapp.com/users/${counter}`
-
-        counter++
-
-        xhr.onload = function() {
-            if (this.status === 200) {
-                try {
-                    let data = JSON.parse(this.responseText).data,
-                        email = data.email,
-                        firstName = data.first_name,
-                        lastName = data.last_name,
-                        avatar = data.avatar,
-                        myEmail = 'dzimenok01@gmail.com',
-                        myFirstName = 'Daniil',
-                        myLastName = 'Zymenok',
-                        myAvatar = '..//practice3/img/квадрат.jpg'
-
-                    if (((counter - 1) % 5) === 0) {
-                        emailPlace.html(myEmail)
-                        namePlace.html(`${myFirstName} <br> ${myLastName}`)
-                        avatarPlace.attr('src', myAvatar)
-
-                    } else {
-                        emailPlace.html(email)
-                        namePlace.html(`${firstName} <br> ${lastName}`)
-                        avatarPlace.attr('src', avatar)
-                    }
-
-                } catch (e) {
-                    console.warn('JSON is broken')
-                }
-
-            } else {
-                console.warn('No accessable site...')
-            }
-        }
-
-        xhr.open('get', url)
-        xhr.send()
-
-        counter = (counter > 12) ? 1 : counter
-    })
-})
+const Firstname = document.getElementById("name");
+const Imag = document.getElementById("photo");
+const Email = document.getElementById("mail");
+let num = 0;
+let numb = 0;
+let start = {
+    Firstname: Firstname.innerText,
+    Imag: Imag.src,
+    Email: Email.innerText
+};
+Firstname.onclick = function()
+    {
+    if (numb++ % 5 === 0) {
+        Firstname.innerText = start.Firstname;
+        Imag.src = start.Imag;
+        Email.innerText = start.Email;
+    }
+    else 
+    {
+        if (num>=0) num = 1;
+        else num++;
+        $ajaxUtils.sendGetRequest("https://webuniv.herokuapp.com/users/" + num, function(response) {
+            const json = (JSON.parse(response.responseText))[0];
+            Firstname.innerText = json.first_name + " " + json.last_name;
+            Email.innerText = json.email;
+            Imag.src = json.avatar;
+        });
+    }
+};
